@@ -1,37 +1,72 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.HashSet;
 
 public class Day1 {
 
     public static void main(String[] args) throws IOException, URISyntaxException {
 
-        int[] inputs = readInput();
+        var inputs = readInput();
 
+        // better solution with set, complexity O(n), space O(n)
+        var result = produceOf2SumUseSet(2020, 0, inputs);
+        System.out.println("Solution for 2 sum with set: " + result);
+
+        // complexity O(n*n), space O(n)
+        result = produceOf3SumUseSet(2020, inputs);
+        System.out.println("Solution for 3 sum with set: " + result);
 
         // O(nlogn) complexity, space O(1)
         Arrays.sort(inputs);
 
-        int result = produceOfTwoSumToTarget(2020, 0, inputs);
-        System.out.println("Solution for 2 sum: " + result);
+        // complexity O(nlogn), space O(1)
+        result = produceOfTwoSumBinarySearch(2020, 0, inputs);
+        System.out.println("Solution for 2 sum with binary search: " + result);
 
-        result = produceOf3SumToTarget(2020, inputs);
+        // complexity O(n*nlogn), space O(1)
+        result = produceOf3SumBinarySearch(2020, inputs);
         System.out.println("Solution for 3 sum: " + result);
     }
 
+    private static int produceOf3SumUseSet(int target, int[] inputs) {
+
+        for(int i = 0; i < inputs.length; i++){
+            var produceOf2 = produceOf2SumUseSet(target-inputs[i], i+1, inputs);
+            if ( produceOf2 != -1) {
+                return produceOf2 * inputs[i];
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Use set to determine 2 sum with complexity of O(n)
+     */
+    private static int produceOf2SumUseSet(int target, int startIdx, int[] inputs) {
+
+        var intSet = new HashSet<Integer>();
+        for(int i = startIdx; i < inputs.length; i ++) {
+            if(intSet.contains(target-inputs[i])){
+                return inputs[i] * (target-inputs[i]);
+            } else {
+                intSet.add(inputs[i]);
+            }
+        }
+        return -1;
+    }
+
     private static int[] readInput() throws URISyntaxException, IOException {
-        URL resource = Day1.class.getClassLoader().getResource("puzzle.txt");
-        Path inputFile = Path.of(resource.toURI());
+        var resource = Day1.class.getClassLoader().getResource("puzzle.txt");
+        var inputFile = Path.of(resource.toURI());
 
         try (BufferedReader inputReader = Files.newBufferedReader(inputFile)) {
 
-            List<Integer> integerList = new ArrayList<>();
+            var integerList = new ArrayList<Integer>();
             String inputLine;
             while ((inputLine = inputReader.readLine()) != null) {
                 integerList.add(Integer.valueOf(inputLine));
@@ -53,8 +88,8 @@ public class Day1 {
      * @param intArray sorted array of integers
      * @return produce of 2 number sum up to target
      */
-    private static int produceOfTwoSumToTarget(int target, int startIdx, int[] intArray) {
-        int result = -1;
+    private static int produceOfTwoSumBinarySearch(int target, int startIdx, int[] intArray) {
+        var result = -1;
         for (int i = startIdx; i < intArray.length; i++) {
             if (searchTargetSum(intArray, i, target)) {
                 result = i;
@@ -62,7 +97,6 @@ public class Day1 {
             }
         }
         if (result != -1) {
-            System.out.println("Found pair: " + intArray[result] + " and " + (target - intArray[result]));
             return intArray[result] * (target - intArray[result]);
         } else {
             return -1;
@@ -74,10 +108,10 @@ public class Day1 {
      * Binary search for target sum, complexity O(logn)
      */
     private static boolean searchTargetSum(int[] intArray, int searchIdx, int target) {
-        int startIdx = searchIdx + 1;
-        int endIdx = intArray.length - 1;
-        int matchPair = intArray[searchIdx];
-        int median;
+        var startIdx = searchIdx + 1;
+        var endIdx = intArray.length - 1;
+        var matchPair = intArray[searchIdx];
+        var median = -1;
 
         while (startIdx <= endIdx) {
             median = startIdx + (endIdx - startIdx) / 2;
@@ -94,14 +128,13 @@ public class Day1 {
     }
 
 
-    private static int produceOf3SumToTarget(int target, int[] inputs) {
-        int result = 0;
-        int produceOf2 = 0;
+    private static int produceOf3SumBinarySearch(int target, int[] inputs) {
+        var result = 0;
+        var produceOf2 = 0;
         for (int i = 0; i < inputs.length; i++) {
-            int match1 = inputs[i];
-            int produce2 = produceOfTwoSumToTarget(target - match1, i + 1, inputs);
+            var match1 = inputs[i];
+            var produce2 = produceOfTwoSumBinarySearch(target - match1, i + 1, inputs);
             if (produce2 != -1) {
-                System.out.println("Find match: " + match1);
                 return match1 * produce2;
             }
         }
