@@ -129,8 +129,6 @@ public class Day1 {
 
 
     private static int produceOf3SumBinarySearch(int target, int[] inputs) {
-        var result = 0;
-        var produceOf2 = 0;
         for (int i = 0; i < inputs.length; i++) {
             var match1 = inputs[i];
             var produce2 = produceOfTwoSumBinarySearch(target - match1, i + 1, inputs);
