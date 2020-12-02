@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 
-public class Day1 {
+public class Day01 {
 
     public static void main(String[] args) throws IOException, URISyntaxException {
 
@@ -61,7 +61,7 @@ public class Day1 {
     }
 
     private static int[] readInput() throws URISyntaxException, IOException {
-        var resource = Day1.class.getClassLoader().getResource("puzzle.txt");
+        var resource = Day01.class.getClassLoader().getResource("day01-puzzle.txt");
         var inputFile = Path.of(resource.toURI());
 
         try (BufferedReader inputReader = Files.newBufferedReader(inputFile)) {
