@@ -1,15 +1,26 @@
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.List;
 
 public class Day02 {
 
     public static void main(String[] args) throws IOException, URISyntaxException {
-        var checkList = readInput();
+
+        var checkList = new ArrayList<PolicyCheck>();
+
+        InputFileReader.readInputAsStream("day02-puzzle.txt").forEach(
+                line -> {
+                    var params = line.split(" ");
+                    checkList.add(
+                            new PolicyCheck(
+                                    params[1].charAt(0),
+                                    Integer.parseInt(params[0].substring(0, params[0].indexOf('-'))),
+                                    Integer.parseInt(params[0].substring(params[0].indexOf('-') + 1)),
+                                    params[2]
+                            )
+                    );
+                }
+        );
 
         var validPasswordCount = checkList.stream().filter(PolicyCheck::validOccurrenceBased).count();
 
@@ -20,28 +31,6 @@ public class Day02 {
         System.out.println("Valid passwords base on position: " + validPasswordCount);
     }
 
-    private static List<PolicyCheck> readInput() throws URISyntaxException, IOException {
-
-        var resource = Day01.class.getClassLoader().getResource("day02-puzzle.txt");
-        var inputFile = Path.of(resource.toURI());
-
-        try (BufferedReader inputReader = Files.newBufferedReader(inputFile)) {
-
-            var checkList = new ArrayList<PolicyCheck>();
-            var inputLine = "";
-            while ((inputLine = inputReader.readLine()) != null) {
-                var input = inputLine.split(" ");
-                var policyCheck = new PolicyCheck(
-                        input[1].charAt(0),
-                        Integer.parseInt(input[0].substring(0, input[0].indexOf('-'))),
-                        Integer.parseInt(input[0].substring(input[0].indexOf('-')+1)),
-                        input[2]);
-                checkList.add(policyCheck);
-            }
-
-            return checkList;
-        }
-    }
 
     static class PolicyCheck {
 
@@ -59,15 +48,13 @@ public class Day02 {
 
         public boolean validOccurrenceBased() {
             var count = password.chars().filter(
-                    c -> {
-                        return (int)key == c;
-                    }
+                    c -> (int) key == c
             ).count();
             return count >= minOccurrence && count <= maxOccurrence;
         }
 
         public boolean validPositionBased() {
-            return password.charAt(minOccurrence-1) == key ^ password.charAt(maxOccurrence-1) == key;
+            return password.charAt(minOccurrence - 1) == key ^ password.charAt(maxOccurrence - 1) == key;
         }
 
     }

@@ -11,7 +11,7 @@ public class Day01 {
 
     public static void main(String[] args) throws IOException, URISyntaxException {
 
-        var inputs = readInput();
+        var inputs = InputFileReader.readInputAsIntArray("day01-puzzle.txt");
 
         // better solution with set, complexity O(n), space O(n)
         var result = produceOf2SumUseSet(2020, 0, inputs);
@@ -60,21 +60,7 @@ public class Day01 {
         return -1;
     }
 
-    private static int[] readInput() throws URISyntaxException, IOException {
-        var resource = Day01.class.getClassLoader().getResource("day01-puzzle.txt");
-        var inputFile = Path.of(resource.toURI());
 
-        try (BufferedReader inputReader = Files.newBufferedReader(inputFile)) {
-
-            var integerList = new ArrayList<Integer>();
-            String inputLine;
-            while ((inputLine = inputReader.readLine()) != null) {
-                integerList.add(Integer.valueOf(inputLine));
-            }
-
-            return integerList.stream().mapToInt(i -> i).toArray();
-        }
-    }
 
     /**
      * Day1 puzzle produce of 2 numbers sum up to 2020
