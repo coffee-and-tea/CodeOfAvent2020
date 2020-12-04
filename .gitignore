@@ -26,5 +26,5 @@ hs_err_pid*
 .idea
 
 # Gradle
-/jdk*/.gradle
-/jdk*/build/
+.gradle
+build/

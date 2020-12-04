@@ -7,13 +7,19 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 public class Day04 {
 
     public static void main(String[] args) throws IOException, URISyntaxException {
-        var input = InputFileReader.readInputAsIterator("day04-puzzle.txt");
+//        var input = InputFileReader.readInputAsIterator("day04-puzzle.txt");
+//
+//        var passports = buildPassports(input);
 
-        var passports = buildPassports(input);
+        var input2 = InputFileReader.readInputAsStream("day04-puzzle.txt");
+
+        var passports = buildPassports(input2);
 
         var validPassports = passports.stream().filter(Passport::valid).count();
 
@@ -24,16 +30,60 @@ public class Day04 {
         System.out.println("Enhanced valid passport count: " + validPassports);
     }
 
+    private static List<Passport> buildPassports(Stream<String> input) {
+
+        StringBuilder passportsString = input.collect(
+                StringBuilder::new,
+                (StringBuilder s1, String s2) -> {
+                    if (s2.trim().length() == 0) {
+                        s1.append("\n");
+                    } else {
+                        s1.append(" ");
+                        s1.append(s2);
+                    }
+                },
+                StringBuilder::append
+        );
+
+        return passportsString.toString().lines().collect(
+                () -> new ArrayList<Passport>(),
+                (list, line) -> {
+                    System.out.println(line);
+                    var passportBuilder = new Passport.Builder();
+                    var params = line.split(" ");
+                    Arrays.stream(params).filter(Predicate.not(String::isEmpty)).forEach(
+                            inputPair -> {
+                                var inputs = inputPair.split(":");
+                                try {
+                                    Method buildMethod = passportBuilder.getClass().getMethod(inputs[0], String.class);
+                                    buildMethod.invoke(passportBuilder, inputs[1]);
+                                } catch (NoSuchMethodException e) {
+                                    e.printStackTrace();
+                                } catch (IllegalAccessException e) {
+                                    e.printStackTrace();
+                                } catch (InvocationTargetException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                    );
+                    list.add(passportBuilder.build());
+                },
+                ArrayList::addAll
+        );
+    }
+
     private static List<Passport> buildPassports(Iterator<String> input) {
 
         var result = new ArrayList<Passport>();
         var passportBuilder = new Passport.Builder();
+
         while (input.hasNext()) {
             var line = input.next();
             if (line == null || line.trim().length() == 0) {
                 result.add(passportBuilder.build());
             } else {
                 var params = line.split(" ");
+
                 Arrays.stream(params).forEach(
                         inputPair -> {
                             var inputs = inputPair.split(":");
@@ -62,6 +112,9 @@ class Passport {
     String eyr;
     String hgt;
     String hcl;
+    String ecl;
+    String pid;
+    String cid;
 
     @Override
     public String toString() {
@@ -76,10 +129,6 @@ class Passport {
                 ", cid='" + cid + '\'' +
                 '}';
     }
-
-    String ecl;
-    String pid;
-    String cid;
 
     public void setByr(String byr) {
         this.byr = byr;
@@ -114,7 +163,6 @@ class Passport {
     }
 
     public boolean valid() {
-        System.out.println(byr != null && iyr != null && eyr != null && hgt != null && hcl != null && ecl != null && pid != null);
         return byr != null && iyr != null && eyr != null && hgt != null && hcl != null && ecl != null && pid != null;
     }
 
@@ -127,7 +175,7 @@ class Passport {
         try {
             return pid != null && pid.length() == 9 && Integer.parseInt(pid) != Integer.MAX_VALUE;
         } catch (NumberFormatException e) {
-          return false;
+            return false;
         }
 
     }
@@ -157,7 +205,7 @@ class Passport {
         try {
             return year != null && year.length() == 4 &&
                     Integer.parseInt(year) >= min && Integer.parseInt(year) <= max;
-        } catch (NumberFormatException e ) {
+        } catch (NumberFormatException e) {
             return false;
         }
 
@@ -231,7 +279,6 @@ class Passport {
             this.iyr = null;
             passport.setPid(this.pid);
             this.pid = null;
-            System.out.println(passport);
             return passport;
         }
 

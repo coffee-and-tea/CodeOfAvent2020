@@ -35,6 +35,4 @@ public class Day03 {
                 i -> map.get(i).charAt(colInc * i / lineInc % roadLength) == '#'
         ).count();
     }
-
-
 }

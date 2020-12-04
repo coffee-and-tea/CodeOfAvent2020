@@ -16,4 +16,5 @@ Day03:
 Base graph traverse problem, boundary check required. Complexity O(n) n is number of lines in graph. 
 
 Day04:
-String parsing and validation. Got a chance to practice builder pattern and reflection in builder. Complexity O(n)
+String parsing and validation. Got a chance to practice builder pattern and reflection in builder. Complexity O(n).
+Input processing is the fun part, where code implements 2 way of how to parse data in different lines together. 
