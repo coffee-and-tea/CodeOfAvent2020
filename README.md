@@ -9,8 +9,11 @@ Day01:
 - solution one: first sort the input then binary search for result, with 2 sum complexity is O(n*logn), 3 sum is O(n^2*logn)
 - solution two use exact space without sorting: with 2 sum complexity is O(n), 3 sum is (n^2)
 
-Day32:
+Day02:
 String data validation, using stream function first question complexity of O(n), second question complexity of O(1)
 
 Day03:
 Base graph traverse problem, boundary check required. Complexity O(n) n is number of lines in graph. 
+
+Day04:
+String parsing and validation. Got a chance to practice builder pattern and reflection in builder. Complexity O(n)

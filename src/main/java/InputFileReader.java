@@ -4,6 +4,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -29,6 +30,15 @@ public class InputFileReader {
             return inputReader.lines().collect(Collectors.toList());
 
         }
+    }
+
+    public static Iterator<String> readInputAsIterator(String fileName) throws URISyntaxException, IOException {
+        var resource = Day03.class.getClassLoader().getResource(fileName);
+        var inputFile = Path.of(resource.toURI());
+
+        BufferedReader inputReader = Files.newBufferedReader(inputFile);
+
+        return inputReader.lines().iterator();
     }
 
     public static int[] readInputAsIntArray(String fileName) throws URISyntaxException, IOException {
