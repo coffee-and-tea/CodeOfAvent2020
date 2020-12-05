@@ -10,11 +10,20 @@ Day01:
 - solution two use exact space without sorting: with 2 sum complexity is O(n), 3 sum is (n^2)
 
 Day02:
+
 String data validation, using stream function first question complexity of O(n), second question complexity of O(1)
 
-Day03:
+Day03: 
+
 Base graph traverse problem, boundary check required. Complexity O(n) n is number of lines in graph. 
 
-Day04:
+Day04: 
+
 String parsing and validation. Got a chance to practice builder pattern and reflection in builder. Complexity O(n).
 Input processing is the fun part, where code implements 2 way of how to parse data in different lines together. 
+
+Day05:
+
+Binary conversion, part one is to convert values to binary and search max, complexity O(n). 
+Part two: using an extra space of O(n), Drop value from set if it's present, find the max value in set is the answer. 
+Complexity O(n); 
