@@ -27,3 +27,9 @@ Day05:
 Binary conversion, part one is to convert values to binary and search max, complexity O(n). 
 Part two: using an extra space of O(n), Drop value from set if it's present, find the max value in set is the answer. 
 Complexity O(n); 
+
+
+Day06:
+
+Similar to day 04, parse input from multi-lines, then process with set. Complexity per group answer is O(n) n is number of answers.
+
