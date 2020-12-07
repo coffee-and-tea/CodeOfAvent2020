@@ -33,3 +33,8 @@ Day06:
 
 Similar to day 04, parse input from multi-lines, then process with set. Complexity per group answer is O(n) n is number of answers.
 
+Day07:
+
+Input consists different rules, parsing rules then store into map to store.
+Part one: determine whether a bag included in other ones, using an extra space of O(n), complexity of O(n) to determine.
+Part two: how many bags inside one bag, perform a deep or width first search in input, complexity of O(n)
