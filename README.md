@@ -38,3 +38,10 @@ Day07:
 Input consists different rules, parsing rules then store into map to store.
 Part one: determine whether a bag included in other ones, using an extra space of O(n), complexity of O(n) to determine.
 Part two: how many bags inside one bag, perform a deep or width first search in input, complexity of O(n)
+
+Day08:
+
+Input to programming instructions, parse through input and simulate execution. Remind me of compiler construction class. 
+Part one: use additional space to store execution records extra space O(n) n is line of code. Complexity: O(n)
+Part two: Need to remember execution state of the code, using a deep first search. Complexity of O(n*n). 
+Is there a better solution with less complexity? 
