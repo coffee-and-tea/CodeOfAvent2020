@@ -45,3 +45,10 @@ Input to programming instructions, parse through input and simulate execution. R
 Part one: use additional space to store execution records extra space O(n) n is line of code. Complexity: O(n)
 Part two: Need to remember execution state of the code, using a deep first search. Complexity of O(n*n), space complexity O(n*n) to store executed instructions 
 Is there a better solution with less complexity? 
+
+Day09
+
+Parsing input values, then valid input and finding input range.
+Part one: find input not result of previous 25 input of 2 sum. Complexity O(n), extra space of 25 element and create a set while determine 2 sum. space O(1)
+Part two: find sum range to the none valid element find in part one, complexity O(n), create linked list to store values and extra variable for sum, offer and poll on list.
+
