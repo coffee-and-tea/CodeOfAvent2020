@@ -43,5 +43,5 @@ Day08:
 
 Input to programming instructions, parse through input and simulate execution. Remind me of compiler construction class. 
 Part one: use additional space to store execution records extra space O(n) n is line of code. Complexity: O(n)
-Part two: Need to remember execution state of the code, using a deep first search. Complexity of O(n*n). 
+Part two: Need to remember execution state of the code, using a deep first search. Complexity of O(n*n), space complexity O(n*n) to store executed instructions 
 Is there a better solution with less complexity? 

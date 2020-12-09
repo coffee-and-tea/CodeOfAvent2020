@@ -56,8 +56,8 @@ class Program {
                 break;
             } else {
                 executedLines.add(executionLine);
+                execute();
             }
-            execute();
         }
         return accumulator;
     }
