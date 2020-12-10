@@ -4,8 +4,10 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -54,6 +56,22 @@ public class InputFileReader {
             }
 
             return integerList.stream().mapToInt(i -> i).toArray();
+        }
+    }
+
+    public static Set<Integer> readInputAsIntSet(String fileName) throws URISyntaxException, IOException {
+        var resource = Day01.class.getClassLoader().getResource(fileName);
+        var inputFile = Path.of(resource.toURI());
+
+        try (BufferedReader inputReader = Files.newBufferedReader(inputFile)) {
+
+            var intSet = new HashSet<Integer>();
+            String inputLine;
+            while ((inputLine = inputReader.readLine()) != null) {
+                intSet.add(Integer.valueOf(inputLine));
+            }
+
+            return intSet;
         }
     }
 }

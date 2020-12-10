@@ -52,3 +52,8 @@ Parsing input values, then valid input and finding input range.
 Part one: find input not result of previous 25 input of 2 sum. Complexity O(n), extra space of 25 element and create a set while determine 2 sum. space O(1)
 Part two: find sum range to the none valid element find in part one, complexity O(n), create linked list to store values and extra variable for sum, offer and poll on list.
 
+Day10:
+
+Graphical path problems.
+Part one: longest path in solution, complexity O(n).
+Part two: how many paths in total, extra space O(n) to store possible path from beginning to reach current node. Then at each node going back to sum all possible path can reach it. Complexity O(n) 
