@@ -56,4 +56,9 @@ Day10:
 
 Graphical path problems.
 Part one: longest path in solution, complexity O(n).
-Part two: how many paths in total, extra space O(n) to store possible path from beginning to reach current node. Then at each node going back to sum all possible path can reach it. Complexity O(n) 
+Part two: how many paths in total, extra space O(n) to store possible path from beginning to reach current node. Then at each node going back to sum all possible path can reach it. Complexity O(n)
+
+Day11:
+Graphical problem similar to image processing, data from one node requires calculation from other.
+Part one: one time calculation requires node to consider all neighbor nodes, one pass complexity O(n*m), this can be highly parallelized to have better performance. extra space O(n*m)
+Part one: same as part one, only neighbors are looking at each direction, so each node can takes O(max(n,m)) or O(n+m), overall it's O((m+n)*n*m), extra space(n*m)
