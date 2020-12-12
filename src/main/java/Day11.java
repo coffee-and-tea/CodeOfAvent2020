@@ -55,6 +55,7 @@ public class Day11 {
         }
 
         System.out.println("Stable after rounds: " + rounds);
+//        Arrays.stream(currentMap).sequential().forEach(line -> System.out.println(Arrays.toString(line)));
         return  Arrays.stream(currentMap).flatMap(
                row ->
                        IntStream.range(0, row.length).mapToObj(i-> row[i])
@@ -70,7 +71,7 @@ public class Day11 {
             case '.':
                 break;
             case 'L':
-                if (getNeighborStream(seatMap, i, j, seatInDirection).filter( c -> c.charValue() == '#').count() == (long) 0){
+                if (getNeighborStream(seatMap, i, j, seatInDirection).filter( c -> c.charValue() == '#').count() == 0){
                     nextSeatState = '#';
                 }
                 break;
