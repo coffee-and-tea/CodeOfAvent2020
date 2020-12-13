@@ -69,3 +69,10 @@ Day12:
 Coordinates and matrix transformation problem
 Part one: perform moves from original point by different direction, trick part is calculate direction and how to model it. Complexity O(n) n is length of input file
 Part two: perform moves base on a reference point, trick part is to calculate waypoint has to translate new coordinates Complexity O(n).
+
+Day13:
+
+Math prime number and common factors
+Part one: calculate gap between arrival time and parse through to find min gap, complexity O(n)
+Part two: search find a number `x` match bus `a1` and gap `g1`, then when match bus `a2` and gap `g2`, since bus are prime number, to reserve the gap needs to increament `a1*a2` everytime.
+Complexity: O(n*m) m is the max prime bus number.
