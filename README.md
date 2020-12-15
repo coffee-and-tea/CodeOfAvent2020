@@ -76,3 +76,9 @@ Math prime number and common factors
 Part one: calculate gap between arrival time and parse through to find min gap, complexity O(n)
 Part two: search find a number `x` match bus `a1` and gap `g1`, then when match bus `a2` and gap `g2`, since bus are prime number, to reserve the gap needs to increament `a1*a2` everytime.
 Complexity: O(n*m) m is the max prime bus number.
+
+Day14:
+
+Binary operations
+Part one: update value base on mask, Complexity O(n)
+Part two: update address base on mask, complexity O(n)
