@@ -82,3 +82,11 @@ Day14:
 Binary operations
 Part one: update value base on mask, Complexity O(n)
 Part two: update address base on mask, complexity O(n)
+
+Day15:
+
+Need to understand type of the question, this is linar progression?
+Part one: calculate value base on stored index of last turn number showed and before last, for round 2020 complexity of O(n), n number of turns, space complexity O(n) to store index
+Part two: same process but calculate more, wondering if there's a way to free up unused space.
+
+ 
