@@ -90,6 +90,13 @@ Part one: calculate value base on stored index of last turn number showed and be
 Part two: same process but calculate more, wondering if there's a way to free up unused space.
 
 Day16:
+
 Modeling ticket and range, with validation
 Part one: validate tickets base on input range, complexity O(m*n) m is number of tickets, n is number of fields. Space O(n) to store fields
 Part two: determine the field base in ticket input complexity: O(m*n + n*nlogn), is there better way to do this?
+
+Day17
+
+Graphic in 3D and 4D.
+Part one: propagate on 3D, Complexity O(m*n*c*c) m is width of input, n is length of input, c is the cycle.
+Part two: propagate on 4D, Complexity O(m*n*c*c*c), how to improve this?
