@@ -89,4 +89,7 @@ Need to understand type of the question, this is linar progression?
 Part one: calculate value base on stored index of last turn number showed and before last, for round 2020 complexity of O(n), n number of turns, space complexity O(n) to store index
 Part two: same process but calculate more, wondering if there's a way to free up unused space.
 
- 
+Day16:
+Modeling ticket and range, with validation
+Part one: validate tickets base on input range, complexity O(m*n) m is number of tickets, n is number of fields. Space O(n) to store fields
+Part two: determine the field base in ticket input complexity: O(m*n + n*nlogn), is there better way to do this?
