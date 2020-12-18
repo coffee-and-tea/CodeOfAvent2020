@@ -100,3 +100,9 @@ Day17
 Graphic in 3D and 4D.
 Part one: propagate on 3D, Complexity O(m*n*c*c) m is width of input, n is length of input, c is the cycle.
 Part two: propagate on 4D, Complexity O(m*n*c*c*c), how to improve this?
+
+Day18
+
+Similar to day08, parsing input and execute instructions, this time with priority.
+Part one: equal priority, evaluate result left to right, for single line length of n complexity O(nlogn) parse logn times on n character
+Part two: priority given to different operation, identify low level priority operation first, same complexity.
