@@ -106,3 +106,4 @@ Day18
 Similar to day08, parsing input and execute instructions, this time with priority.
 Part one: equal priority, evaluate result left to right, for single line length of n complexity O(nlogn) parse logn times on n character
 Part two: priority given to different operation, identify low level priority operation first, same complexity.
+
