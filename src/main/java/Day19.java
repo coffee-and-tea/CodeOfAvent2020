@@ -1,7 +1,6 @@
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -12,17 +11,15 @@ import java.util.stream.Collectors;
 
 public class Day19 {
 
-    static Map<String, Rule> rules = new HashMap<>();
-
     public static void main(String[] args) throws IOException, URISyntaxException {
         var input = InputFileReader.readInputAsStream("day19-puzzle.txt");
 
         var result = input.mapToInt(
                 line -> {
                     if (line.contains(":")) {
-                        processRule(line);
+                        Rule.processRule(line);
                     } else if (line.length() > 0) {
-                        if (matchRuleZero(line)) {
+                        if (Rule.matchLoopingZero(line)) {
                             return 1;
                         }
                     }
@@ -34,21 +31,12 @@ public class Day19 {
 
         input = InputFileReader.readInputAsStream("day19-puzzle.txt");
 
-        var rule8change = new ArrayList<Rule>();
-        rule8change.add(rules.get("42"));
-        rule8change.add(rules.get("8"));
-        rules.get("8").details.add(rule8change);
-
-        var rule11change = new ArrayList<Rule>();
-        rule11change.add(rules.get("42"));
-        rule11change.add(rules.get("11"));
-        rule11change.add(rules.get("31"));
-        rules.get("11").details.add(rule11change);
+        createLoop();
 
         result = input.mapToInt(
                 line -> {
                     if (!line.contains(":") && line.length() > 0) {
-                        if (matchLoopingZero(line)) {
+                        if (Rule.matchLoopingZero(line)) {
                             return 1;
                         }
                     }
@@ -60,53 +48,24 @@ public class Day19 {
 
     }
 
-    private static boolean matchLoopingZero(String line) {
-        var initialList = new ArrayList<Rule>();
-        initialList.add(rules.get("0"));
-        return Rule.matchLooping(initialList, line);
+    private static void createLoop() {
+        var rule8change = new ArrayList<Rule>();
+        rule8change.add(Rule.allRules.get("42"));
+        rule8change.add(Rule.allRules.get("8"));
+        Rule.allRules.get("8").details.add(rule8change);
+
+        var rule11change = new ArrayList<Rule>();
+        rule11change.add(Rule.allRules.get("42"));
+        rule11change.add(Rule.allRules.get("11"));
+        rule11change.add(Rule.allRules.get("31"));
+        Rule.allRules.get("11").details.add(rule11change);
     }
 
-    private static boolean matchRuleZero(String line) {
-        return rules.get("0").match(line);
-    }
-
-    private static void processRule(String line) {
-        var defineRuleId = line.substring(0, line.indexOf(':'));
-        var defineRule = rules.computeIfAbsent(defineRuleId, (id) -> new Rule(id));
-        if (line.contains("\"")) {
-            defineRule.ch = line.charAt(line.indexOf('"') + 1);
-        } else {
-            var subRules = line.substring(line.indexOf(':') + 2).split(" ");
-            ArrayList<Rule> ruleLinkedList = new ArrayList<>();
-            for (String ruleId : subRules) {
-                if (ruleId.equals("|")) {
-                    defineRule.details.add(ruleLinkedList);
-                    ruleLinkedList = new ArrayList<>();
-                } else {
-                    var subRule = rules.computeIfAbsent(ruleId, (id) -> new Rule(id));
-                    ruleLinkedList.add(subRule);
-                }
-            }
-            defineRule.details.add(ruleLinkedList);
-        }
-    }
 }
 
 class SearchOption {
 
     List<Rule> rules;
-
-    @Override
-    public String toString() {
-        var ruleString = rules.stream().map(
-                rule -> rule.id
-        ).collect(Collectors.toList());
-
-        return "SearchOption{" +
-                "rules=" + ruleString +
-                ", searchTarget='" + searchTarget + '\'' +
-                '}';
-    }
 
     String searchTarget;
 
@@ -118,10 +77,11 @@ class SearchOption {
 
 class Rule {
 
+    static Map<String, Rule> allRules = new HashMap<>();
+
     String id;
     Character ch;
     Set<List<Rule>> details = new HashSet<>();
-    Set<String> matches = new HashSet<>();
 
     public Rule(String id) {
         this.id = id;
@@ -182,58 +142,31 @@ class Rule {
         return false;
     }
 
-    public Set<String> build() {
-        if (matches.size() > 0) {
-            return Collections.unmodifiableSet(matches);
-        }
+    public static void processRule(String line) {
 
-        if (ch != null) {
-            matches = Set.of(ch.toString());
+        var defineRuleId = line.substring(0, line.indexOf(':'));
+        var defineRule = allRules.computeIfAbsent(defineRuleId, (id) -> new Rule(id));
+        if (line.contains("\"")) {
+            defineRule.ch = line.charAt(line.indexOf('"') + 1);
         } else {
-            matches = details.stream().map(
-                    // each rule list create a set of strings
-                    rules ->
-                            rules.stream().map(
-                                    rule -> rule.build()
-                            ).reduce(new HashSet<>(),
-                                    (a, b) -> {
-                                        var res = new HashSet<String>();
-                                        if(a.size() == 0)
-                                            return b;
-                                        if(b.size() == 0) {
-                                            return a;
-                                        }
-                                        for (String aString : a) {
-                                            for (String bString : b) {
-                                                res.add(aString + bString);
-                                            }
-                                        }
-                                        return res;
-                                    }
-                            )
-            ).reduce(new HashSet<>(), (a, b) -> {
-                        a.addAll(b);
-                        return a;
-                    }
-            );
-
+            var subRules = line.substring(line.indexOf(':') + 2).split(" ");
+            ArrayList<Rule> ruleLinkedList = new ArrayList<>();
+            for (String ruleId : subRules) {
+                if (ruleId.equals("|")) {
+                    defineRule.details.add(ruleLinkedList);
+                    ruleLinkedList = new ArrayList<>();
+                } else {
+                    var subRule = allRules.computeIfAbsent(ruleId, (id) -> new Rule(id));
+                    ruleLinkedList.add(subRule);
+                }
+            }
+            defineRule.details.add(ruleLinkedList);
         }
-        return matches;
     }
 
-    public boolean match(String input) {
-        build();
-        return matches.contains(input);
+    public static boolean matchLoopingZero(String line) {
+        var initialList = new ArrayList<Rule>();
+        initialList.add(allRules.get("0"));
+        return Rule.matchLooping(initialList, line);
     }
-
-    @Override
-    public String toString() {
-        return "Rule{" +
-                "id='" + id + '\'' +
-                ", ch=" + ch +
-                ", details=" + details +
-                '}' +"\n";
-    }
-
-
 }

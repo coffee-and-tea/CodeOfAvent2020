@@ -107,3 +107,26 @@ Similar to day08, parsing input and execute instructions, this time with priorit
 Part one: equal priority, evaluate result left to right, for single line length of n complexity O(nlogn) parse logn times on n character
 Part two: priority given to different operation, identify low level priority operation first, same complexity.
 
+Day19
+
+Very much like compiler syntax analysis, to determine the if there's any syntax error for a programming language.
+Part one: initial solution I put was to generate all possible solutions then compare with input, later update to use same solution as part two. 
+Put all possible solution in a set, rules are like a tree, deep search first to match. If there's n rules, and m is the input length, complexity would be O(m*logn).
+Extra space for the set to keep all potential solutions O(m*logn)
+Part one: same as part one only, prevent solutions size is greater than length of the input, complexity O(m*max(logn, m)) and space required O(m*max(logn, m))
+
+Day20
+
+Graph problem, although not enjoy my solution at all
+Part one: 1) read inputs into own image, 2) then build sides from image, 3) later comparing sides with others to decide neighbors at this point image with only 2 neighbors are the corners.
+then multiply those to get result, although not address the problem if there's multiple matches for side. Complexity? Space?
+Part two: with neighbors built from above, introduce rotation to matching the right side to the neighbor, starting from a random one and propagate to sides.
+then give neighbor an index base on the position, from top left to far bottom right. Then remove the border to construct a full image.
+To find the monster, need to use existing rotation and flip function when reposition neighbors had for image, to reposition image to find it. Then just rotation and flip all the way it can to identify and mark.
+
+Day21
+
+Sets calculation problem, if modeled well, this is relatively easy one
+Part one: build Allergen with candidate list, parsing input intersect with existing candidate list to determine ingradient,
+then if only one ingradient could cause allergen remove that from rest of allergen candidate list. Counting input with filter
+Part two: result is already there with part one, just sort and print

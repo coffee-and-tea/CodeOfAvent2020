@@ -15,21 +15,23 @@ public class Day20 {
     public static void main(String[] args) throws IOException, URISyntaxException {
         var input = InputFileReader.readInputAsIterator("day20-puzzle.txt");
 
-        processInput(input);
+        Tile.processInput(input);
 
         Tile.buildSides();
 
-        Tile.buildImage();
+        Tile.identifyNeighbors();
 
-        var result = Tile.tiles.values().stream().filter(
+        Tile.repositionAllTiles();
+
+        var partOneResult = Tile.tiles.values().stream().filter(
                 tile -> tile.neighbor.size() < 3
         ).mapToLong(
                 tile -> tile.id
         ).reduce(1, (a, b) -> a * b);
 
-        System.out.println(result);
+        System.out.println(partOneResult);
 
-        Tile graph = printImage();
+        Tile graph = Tile.buildImage();
 
         Map<Integer, List<Integer>> monsterChecks = new HashMap<>();
         monsterChecks.put(0, List.of(18));
@@ -40,29 +42,6 @@ public class Day20 {
         var monsterHeight = 3;
 
         graph.findMonster(monsterChecks, monsterLength, monsterHeight);
-    }
-
-    private static Tile printImage() {
-        return Tile.order();
-    }
-
-    private static void processInput(java.util.Iterator<String> input) {
-        Tile tile = new Tile(-1);
-        var lines = new ArrayList<String>();
-
-        while (input.hasNext()) {
-            var line = input.next();
-            if (line.startsWith("Tile")) {
-                tile = new Tile(Integer.parseInt(line.substring(line.indexOf('e') + 2, line.indexOf(':'))));
-                lines = new ArrayList<>();
-                Tile.tiles.put(tile.id, tile);
-            } else if (line.trim().isEmpty()) {
-                tile.lines = lines;
-            } else {
-                lines.add(line);
-            }
-        }
-        tile.lines = lines;
     }
 }
 
@@ -82,9 +61,7 @@ class Tile {
         this.id = id;
     }
 
-    public static void buildImage() {
-
-        int imageLength = (int) Math.sqrt(tiles.size());
+    public static void identifyNeighbors() {
 
         var allTiles = tiles.values().stream().collect(Collectors.toList());
 
@@ -93,22 +70,23 @@ class Tile {
             allTiles.stream().forEach(
                     tile -> tile.matchSide(currentTile));
         }
-
-        mergeTiles();
     }
 
-    private static void mergeTiles() {
+    /**
+     * locate first tile then reposition rest of the tiles base on this one
+     */
+    public static void repositionAllTiles() {
 
         LinkedList<Tile> listToMerge = new LinkedList<>();
         Set<Tile> alreadyMerged = new HashSet<>();
         listToMerge.offer(tiles.values().stream().findFirst().get());
 
-        // propagate while still anything not corrected
+        // propagate while still anything not repositioned
         while (listToMerge.size() > 0) {
 
             var currentTile = listToMerge.pop();
             alreadyMerged.add(currentTile);
-            currentTile.mergeWithNeighbors();
+            currentTile.repositionNeighbors();
             currentTile.neighbor.values().stream().filter(
                     tile -> !alreadyMerged.contains(tile)
             ).forEach(
@@ -124,7 +102,7 @@ class Tile {
         );
     }
 
-    public static Tile order() {
+    public static Tile buildImage() {
         var topLeftTile = tiles.values().stream().filter(
                 tile -> tile.neighbor.get(0) == null && tile.neighbor.get(3) == null
         ).findFirst().get();
@@ -134,15 +112,31 @@ class Tile {
 
         topLeftTile.orderNeighbor();
 
-        topLeftTile.printTile();
-
         List<String> graph = topLeftTile.constructGraph();
-        System.out.println("-----------------------------");
-        graph.stream().forEach(System.out::println);
 
         Tile graphTile = new Tile(-1);
         graphTile.lines = graph;
         return graphTile;
+    }
+
+    public static void processInput(java.util.Iterator<String> input) {
+
+        Tile tile = new Tile(-1);
+        var lines = new ArrayList<String>();
+
+        while (input.hasNext()) {
+            var line = input.next();
+            if (line.startsWith("Tile")) {
+                tile = new Tile(Integer.parseInt(line.substring(line.indexOf('e') + 2, line.indexOf(':'))));
+                lines = new ArrayList<>();
+                Tile.tiles.put(tile.id, tile);
+            } else if (line.trim().isEmpty()) {
+                tile.lines = lines;
+            } else {
+                lines.add(line);
+            }
+        }
+        tile.lines = lines;
     }
 
     private List<String> constructGraph() {
@@ -170,11 +164,7 @@ class Tile {
 
     private void orderNeighbor() {
 
-
-        if (id == 2617 || id == 2273) {
-            lines.stream().forEach(System.out::println);
-        }
-
+        // order right side neighbors
         var rightNeighbor = this.neighbor.get(1);
         if (rightNeighbor != null) {
             rightNeighbor.x = this.x + 1;
@@ -186,7 +176,6 @@ class Tile {
         if (this.neighbor.get(3) == null) {
             var bottomNeighbor = this.neighbor.get(2);
             if (bottomNeighbor != null) {
-                System.out.println("Order neighbor bottom: " + this.id);
                 bottomNeighbor.x = this.x;
                 bottomNeighbor.y = this.y + 1;
                 bottomNeighbor.orderNeighbor();
@@ -195,86 +184,44 @@ class Tile {
 
     }
 
-    private void mergeWithNeighbors() {
-        // merging partner: 0 match 2, 1 match 3, 2 match 0, 3 match 1
+    private void repositionNeighbors() {
+        // reposition neighbors: 0 match 2, 1 match 3, 2 match 0, 3 match 1
 
-        // merge side 0:
+        // side 0(top): the matching side needs to be at bottom
         if (neighbor.get(0) != null) {
-            topLink(neighbor.get(0));
+            neighbor.get(0).rotateToMatchPosition(sides.get(0), 2);
         }
+
+        // side 1(right): the matching neigbhor side needs to be at left
         if (neighbor.get(1) != null) {
-            rightLink(neighbor.get(1));
+            neighbor.get(1).rotateToMatchPosition(sides.get(1), 3);
         }
+
+        // side 2(bottom): the matching neigbhor side needs to be at top
         if (neighbor.get(2) != null) {
-            bottomLink(neighbor.get(2));
+            neighbor.get(2).rotateToMatchPosition(sides.get(2), 0);
         }
+
+        // side 3(left): the matching neigbhor side needs to be at right
         if (neighbor.get(3) != null) {
-            leftLink(neighbor.get(3));
+            neighbor.get(3).rotateToMatchPosition(sides.get(3), 1);
         }
     }
 
-    private void leftLink(Tile anotherTile) {
-        anotherTile.rotateToRightMatch(sides.get(3));
-    }
-
-    private void rotateToRightMatch(String rightSide) {
+    private void rotateToMatchPosition(String targetSide, int targetPosition) {
         var currentMatchIndex = sides.indexOf(
                 sides.stream().filter(
-                        side -> matchString(side, rightSide)
+                        side -> matchSides(side, targetSide)
                 ).findFirst().get()
         );
-        int targetIndex = 1;
 
-        rotate(currentMatchIndex, targetIndex, rightSide);
+        rotate(currentMatchIndex, targetPosition, targetSide);
     }
 
-    private void bottomLink(Tile anotherTile) {
-        anotherTile.rotateToTopMatch(sides.get(2));
-    }
-
-    private void rotateToTopMatch(String topSide) {
-        var currentMatchIndex = sides.indexOf(
-                sides.stream().filter(
-                        side -> matchString(side, topSide)
-                ).findFirst().get()
-        );
-        int targetIndex = 0;
-
-        rotate(currentMatchIndex, targetIndex, topSide);
-    }
-
-    private void rightLink(Tile anotherTile) {
-        anotherTile.rotateToLeftMatch(sides.get(1));
-    }
-
-    private void rotateToLeftMatch(String leftSide) {
-
-        var currentMatchIndex = sides.indexOf(
-                sides.stream().filter(
-                        side -> matchString(side, leftSide)
-                ).findFirst().get()
-        );
-        int targetIndex = 3;
-
-        rotate(currentMatchIndex, targetIndex, leftSide);
-    }
-
-    private void topLink(Tile anotherTile) {
-        anotherTile.rotateToBottomMatch(sides.get(0));
-    }
-
-    private void rotateToBottomMatch(String bottomSide) {
-
-        var currentMatchIndex = sides.indexOf(
-                sides.stream().filter(
-                        side -> matchString(side, bottomSide)
-                ).findFirst().get()
-        );
-        int targetIndex = 2;
-
-        rotate(currentMatchIndex, targetIndex, bottomSide);
-    }
-
+    /**
+     * this can be improved, but current implementation would just rotate left until side in position
+     * Then flip if needed to reposition to match the neighbor requests this
+    * */
     private void rotate(int currentMatchIndex, int targetIndex, String targetResult) {
         while (currentMatchIndex != targetIndex) {
             rotateLeft();
@@ -342,25 +289,23 @@ class Tile {
         this.neighbor = rotatedNeighbor;
     }
 
-    private boolean matchString(String side, String anotherSide) {
+    private boolean matchSides(String side, String anotherSide) {
         return side.equals(anotherSide) || reverse(side).equals(anotherSide);
     }
 
-    @Override
-    public String toString() {
-        return "Tile{" +
-                "id=" + id +
-                "x=" + x +
-                "y=" + y +
-                '}';
-    }
-
+    /**
+     * sides are match with neighbors, during this process
+     * neighbor 0: top neighbor
+     * neighbor 1: right side neighbor
+     * neighbor 2: bottom side neighbor
+     * neighbor 3: left side neighbor
+     */
     private void matchSide(Tile anotherTile) {
         sides.stream().forEach(
                 thisSide ->
                         anotherTile.sides.stream().forEach(
                                 anotherSide -> {
-                                    if (matchString(thisSide, anotherSide)) {
+                                    if (matchSides(thisSide, anotherSide)) {
                                         this.neighbor.put(sides.indexOf(thisSide), anotherTile);
                                         anotherTile.neighbor.put(anotherTile.sides.indexOf(anotherSide), this);
                                     }
@@ -374,6 +319,13 @@ class Tile {
         return sb.reverse().toString();
     }
 
+    /**
+     * 4 sides are added for a tile:
+     * side 0: top one
+     * side 1: right one
+     * side 2: bottom one
+     * side 3: left one
+     */
     public void buildTileSides() {
         sides = new ArrayList<>();
         sides.add(lines.get(0));
@@ -390,27 +342,6 @@ class Tile {
         );
     }
 
-    public void printTile() {
-        if (neighbor.get(3) == null) {
-            IntStream.range(0, lines.size()).forEach(
-                    i -> this.printLine(i)
-            );
-        }
-
-        if (neighbor.get(2) != null) {
-            neighbor.get(2).printTile();
-        }
-    }
-
-    private void printLine(int i) {
-        System.out.print(lines.get(i));
-        if (neighbor.get(1) != null) {
-            neighbor.get(1).printLine(i);
-        } else {
-            System.out.println();
-        }
-    }
-
     public void findMonster(Map<Integer, List<Integer>> monsterChecks, int monsterLength, int monsterHeight) {
 
         findMonsterWithoutRotate(monsterChecks, monsterLength, monsterHeight);
@@ -423,7 +354,7 @@ class Tile {
 
         findMonsterWithoutRotate(monsterChecks, monsterLength, monsterHeight);
 
-        rotateLeft();
+        horizontalFlip();
 
         findMonsterWithoutRotate(monsterChecks, monsterLength, monsterHeight);
 
@@ -431,14 +362,32 @@ class Tile {
 
         findMonsterWithoutRotate(monsterChecks, monsterLength, monsterHeight);
 
-        System.out.println("=================================");
-        this.lines.stream().forEach(System.out::println);
+        sideFlip();
+
+        findMonsterWithoutRotate(monsterChecks, monsterLength, monsterHeight);
+
+        horizontalFlip();
+
+        findMonsterWithoutRotate(monsterChecks, monsterLength, monsterHeight);
+
+        rotateLeft();
+
+        findMonsterWithoutRotate(monsterChecks, monsterLength, monsterHeight);
+
+        sideFlip();
+
+        findMonsterWithoutRotate(monsterChecks, monsterLength, monsterHeight);
+
+        horizontalFlip();
+
+        findMonsterWithoutRotate(monsterChecks, monsterLength, monsterHeight);
+
         var result = this.lines.stream().mapToInt(
                 line -> {
                     int count = 0;
-                    for(char ch : line.toCharArray() ) {
+                    for (char ch : line.toCharArray()) {
                         if (ch == '#') {
-                            count ++;
+                            count++;
                         }
                     }
                     return count;
@@ -449,7 +398,6 @@ class Tile {
     }
 
     private void findMonsterWithoutRotate(Map<Integer, List<Integer>> monsterChecks, int monsterLength, int monsterHeight) {
-        System.out.println("Find monster in grid: " + lines.size() + "," + lines.get(0).length());
         IntStream.range(0, lines.size() - monsterHeight).forEach(
                 y ->
                         IntStream.range(0, lines.size() - monsterLength).forEach(
@@ -464,24 +412,24 @@ class Tile {
                 entry -> {
                     var yVariance = entry.getKey();
                     return entry.getValue().stream().allMatch(
-                            xVariance -> lines.get(y+yVariance).charAt(x+xVariance) == '#'
+                            xVariance -> lines.get(y + yVariance).charAt(x + xVariance) == '#'
                     );
                 }
         );
 
-        if(found) {
+        if (found) {
             monsterChecks.entrySet().stream().forEach(
-            entry -> {
-                var yVariance = entry.getKey();
-                entry.getValue().stream().forEach(
-                        xVariance -> {
-                            var line = lines.get(y+yVariance);
-                            line = line.substring(0, x+xVariance) + "0" + line.substring(x+xVariance+1);
-                            lines.remove(y+yVariance);
-                            lines.add(y+yVariance, line);
-                        }
-                );
-            });
+                    entry -> {
+                        var yVariance = entry.getKey();
+                        entry.getValue().stream().forEach(
+                                xVariance -> {
+                                    var line = lines.get(y + yVariance);
+                                    line = line.substring(0, x + xVariance) + "0" + line.substring(x + xVariance + 1);
+                                    lines.remove(y + yVariance);
+                                    lines.add(y + yVariance, line);
+                                }
+                        );
+                    });
         }
     }
 }
