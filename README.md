@@ -130,3 +130,9 @@ Sets calculation problem, if modeled well, this is relatively easy one
 Part one: build Allergen with candidate list, parsing input intersect with existing candidate list to determine ingradient,
 then if only one ingradient could cause allergen remove that from rest of allergen candidate list. Counting input with filter
 Part two: result is already there with part one, just sort and print
+
+Day22
+
+Round game.
+Part one: build game rounds and determine the winning player, ends when one player has no more cards. TBD complexity
+Part two: detect cycle and build sub game rule. TBD complexity
