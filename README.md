@@ -136,3 +136,15 @@ Day22
 Round game.
 Part one: build game rounds and determine the winning player, ends when one player has no more cards. TBD complexity
 Part two: detect cycle and build sub game rule. TBD complexity
+
+Day23
+
+Create customerized data structure
+Part one: initialize use Java provided link list to simulate for 100 round.
+Part two: created customerized implementation for better performance.
+
+Day24
+
+Graphic arrangement
+Part one: parse input to create coordinates
+Part two: flip base on coordinates 
