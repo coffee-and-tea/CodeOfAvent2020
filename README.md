@@ -148,3 +148,8 @@ Day24
 Graphic arrangement
 Part one: parse input to create coordinates
 Part two: flip base on coordinates 
+
+Day25
+
+Loop to determine loop size
+Part one: loop until result match
